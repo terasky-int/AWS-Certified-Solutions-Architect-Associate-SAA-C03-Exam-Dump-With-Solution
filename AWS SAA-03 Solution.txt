@@ -329,10 +329,39 @@ AWS Shield Advanced provides expanded DDoS attack protection for your Amazon EC2
 36] 
 
 
+Requirements in the question
+
+Must use an AWS KMS customer-managed key (CMK) — not SSE-S3.
+
+Same key must be usable in both Regions — key material needs to exist in both Regions.
+
+Least operational overhead — avoid managing multiple keys, manual rotations, or client-side crypto.
+
+Options analysis
+
+A. Wrong. Uses SSE-S3 (AWS-managed keys), not customer-managed.
+
+B. Uses multi-Region CMK (good) but requires client-side encryption in the app, which increases overhead.
+
+C. Wrong. Says customer-managed KMS + SSE-S3 — contradictory, and not aligned with requirements.
+
+D. Works (two separate CMKs, one per Region, with replication), but requires managing two distinct keys and mapping them. More operational burden than necessary.
+
+Correct answer
+
+B is closest, but it forces client-side encryption, which isn’t necessary if you want server-side (SSE-KMS).
+The real best practice is:
+
+Create a multi-Region customer managed KMS key.
+
+Use that key with SSE-KMS in both buckets.
+
+That gives you server-side encryption with the same replicated CMK across Regions and lowest overhead.
+But in the given choices, the intent is:
+👉 Answer: B.
 
 
-
-
+----------------------------------------------------------------------------------
 
 
 37] A company recently launched a variety of new workloads on Amazon EC2 instances in its AWS account. The company needs to create a strategy to access and administer the instances remotely and securely. The company needs to implement a repeatable process that works with native AWS services and follows the AWS Well-Architected Framework.
